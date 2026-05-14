@@ -1,17 +1,15 @@
-# 📋 Dynamic Questionnaire System
+# 📋 Dynamic Questionnaire — Backend API
 
-> 一個基於 **Angular 19** 構建的全功能問卷管理平台，涵蓋動態問卷設計、即時統計圖表、前後台角色分離與 Token 身份驗證，並已部署至 GitHub Pages。
+> 一個基於 **Spring Boot 4** 構建的動態問卷系統後端，提供完整的 RESTful API，涵蓋問卷管理、使用者系統、作答記錄與統計查詢，並與 Angular 19 前端整合部署。
 
 <div align="center">
 
-[![Angular](https://img.shields.io/badge/Angular-19-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Angular Material](https://img.shields.io/badge/Angular_Material-19-7B1FA2?style=for-the-badge&logo=angular&logoColor=white)](https://material.angular.io/)
-[![Chart.js](https://img.shields.io/badge/Chart.js-4.5-FF6384?style=for-the-badge&logo=chartdotjs&logoColor=white)](https://www.chartjs.org/)
-[![RxJS](https://img.shields.io/badge/RxJS-7.8-B7178C?style=for-the-badge&logo=reactivex&logoColor=white)](https://rxjs.dev/)
-[![License](https://img.shields.io/badge/License-MIT-22c55e?style=for-the-badge)](LICENSE)
-
-**🔗 Live Demo：[https://BeeSuperman.github.io/dynamic-questionnaire-frontend](https://BeeSuperman.github.io/dynamic-questionnaire-frontend)**
+[![Spring Boot](https://img.shields.io/badge/Spring_Boot-4.0.2-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
+[![Java](https://img.shields.io/badge/Java-17-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)](https://openjdk.org/projects/jdk/17/)
+[![Spring Security](https://img.shields.io/badge/Spring_Security-6.x-6DB33F?style=for-the-badge&logo=springsecurity&logoColor=white)](https://spring.io/projects/spring-security)
+[![Spring Data JPA](https://img.shields.io/badge/Spring_Data_JPA-4.x-6DB33F?style=for-the-badge&logo=spring&logoColor=white)](https://spring.io/projects/spring-data-jpa)
+[![MySQL](https://img.shields.io/badge/MySQL-8.x-4479A1?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![Gradle](https://img.shields.io/badge/Gradle-8.x-02303A?style=for-the-badge&logo=gradle&logoColor=white)](https://gradle.org/)
 
 </div>
 
@@ -19,71 +17,117 @@
 
 ## 📌 專案簡介
 
-本專案是一套完整的「動態問卷系統」前端應用，實作了前台（一般使用者）與後台（管理者）兩大角色的完整業務流程。系統透過 **RESTful API** 與後端溝通，使用 **Angular Reactive Forms** 處理複雜表單，並整合 **Chart.js** 提供直覺的統計視覺化呈現。
+本專案是「動態問卷系統」的後端 API 服務，以 **Spring Boot 4 + Spring Data JPA + MySQL** 為核心技術棧。提供問卷的完整 CRUD、使用者註冊登入（BCrypt 密碼加密）、作答記錄儲存與查詢等 RESTful API，並搭配整合 **Springdoc OpenAPI（Swagger UI）** 進行線上 API 文件管理。
 
-本專案旨在展示以下企業級前端開發能力：
-- ✅ **Component-Based Architecture** — 高度模組化的元件拆分設計
-- ✅ **Route Guard（路由守衛）** — 基於 Token 的前端身份驗證與頁面保護
-- ✅ **Reactive Forms** — 複雜的表單驗證與動態控件管理
-- ✅ **服務層抽象（Service Layer）** — 統一的 HttpClient 封裝，關注點分離
-- ✅ **CI/CD 自動部署** — 透過 `gh-pages` 一鍵發布至 GitHub Pages
+**本專案旨在展示以下後端開發能力：**
+- ✅ **三層式架構（Controller / Service / DAO）** — 職責分離，高內聚低耦合
+- ✅ **Spring Data JPA + 原生 JPQL** — 靈活的資料庫查詢策略
+- ✅ **Spring Security（BCrypt）** — 密碼加密儲存，安全防護
+- ✅ **全域例外處理（@RestControllerAdvice）** — 統一的錯誤回應格式
+- ✅ **Caffeine Cache** — 本地快取機制，提升高頻查詢效能
+- ✅ **@Scheduled 排程任務** — Spring 內建排程，定時執行背景工作
+- ✅ **@Transactional 事務管理** — 確保跨 DAO 操作的資料一致性
+- ✅ **Bean Validation（@Valid）** — Controller 層 Request 參數自動驗證
 
 ---
 
-## ✨ 功能特色
+## ✨ API 功能列表
 
-### 👤 使用者端（公開頁面）
+### 📝 問卷管理（Quiz）
 
-| 功能 | 說明 |
-|------|------|
-| 問卷列表瀏覽 | 呈現所有已發布的公開問卷，含標題、狀態等資訊 |
-| 動態問卷填寫 | 根據後端資料結構，**動態渲染**單選、多選、簡答等題型 |
-| 填寫確認頁 | 送出前讓使用者完整預覽並二次確認作答內容 |
-| 統計圖表查看 | 以 **Chart.js** 圓餅圖／長條圖可視化呈現各題統計結果 |
+| Method | Endpoint | 功能說明 |
+|--------|----------|---------|
+| `POST` | `/quiz/create` | 建立新問卷（含問題列表） |
+| `GET` | `/quiz/getAll` | 取得所有問卷列表 |
+| `GET` | `/quiz/get?quizId={id}` | 取得單筆問卷（含題目詳情） |
+| `GET` | `/quiz/get_QuestionList?quizId={id}` | 取得指定問卷的所有題目 |
+| `POST` | `/quiz/update` | 更新問卷（含智慧差異更新題目） |
+| `POST` | `/quiz/delete` | 批次刪除問卷 |
 
-### 🔐 會員系統
+### 📨 作答記錄（Fillin）
 
-| 功能 | 說明 |
-|------|------|
-| 會員註冊 | 含欄位格式驗證的完整帳號建立流程 |
-| 登入 / 登出 | JWT Token 身份驗證，Session 安全管理 |
-| 個人資料管理 | 查看與編輯會員基本資訊 |
+| Method | Endpoint | 功能說明 |
+|--------|----------|---------|
+| `POST` | `/quiz/fillin` | 提交問卷作答（自動建立訪客帳號） |
+| `GET` | `/quiz/feedback?quizId={id}` | 取得指定問卷所有作答者回覆清單 |
+| `POST` | `/quiz/feedback` | 取得指定使用者對特定問卷的詳細作答 |
 
-### 🛠️ 管理者端（受保護頁面，需登入）
+### 👤 使用者系統（User）
 
-| 功能 | 說明 |
-|------|------|
-| 問卷管理列表 | 查看所有問卷狀態，執行發布 / 下架 / 刪除 |
-| 問卷動態設計 | 可視化介面新增 / 編輯問卷題目，支援多種題型 |
-| 問卷結果管理 | 逐筆查閱每位使用者的作答紀錄 |
+| Method | Endpoint | 功能說明 |
+|--------|----------|---------|
+| `POST` | `/user/register` | 會員註冊（密碼 BCrypt 加密） |
+| `POST` | `/user/login` | 會員登入（比對加密密碼，回傳用戶資料） |
+| `POST` | `/user/check_registered` | 檢查 Email 是否為已註冊會員 |
+| `POST` | `/user/update` | 更新會員資料（支援選填新密碼） |
 
 ---
 
 ## 🏗️ 專案架構
 
 ```
-src/
-└── app/
-    ├── components/                  # 功能元件（Feature Components）
-    │   ├── login/                   # 登入頁
-    │   ├── register/                # 會員註冊
-    │   ├── list/                    # 前台問卷列表
-    │   ├── questionnaire-fill/      # 動態問卷填寫
-    │   ├── questionnaire-confirm/   # 填寫確認頁
-    │   ├── statistic/               # 統計圖表（Chart.js）
-    │   ├── adminlist/               # 後台問卷管理列表
-    │   ├── admindesign/             # 問卷設計器
-    │   ├── adminresult/             # 後台作答結果查看
-    │   ├── member-profile/          # 個人資料頁
-    │   └── sidenav/                 # 側邊導覽列元件
-    ├── guards/
-    │   └── auth.guard.ts            # 路由守衛（Token 驗證）
-    ├── models/                      # TypeScript 型別定義（介面）
-    ├── services/
-    │   ├── auth.service.ts          # 身份驗證服務
-    │   └── questionnaire.service.ts # 問卷相關 API 封裝
-    ├── app.routes.ts                # 三層路由配置
-    └── app.config.ts                # 應用程式全域設定
+src/main/java/com/example/quiz_1141121/
+├── Quiz1141121Application.java     # Spring Boot 啟動入口（排除預設 Security 配置）
+│
+├── config/
+│   └── CaffeineCacheConfig.java    # Caffeine 本地快取配置（TTL 600s, Max 500筆）
+│
+├── constants/
+│   ├── ReplyMessage.java           # 統一 API 回應代碼與訊息 Enum
+│   ├── Type.java                   # 題型定義 Enum（SINGLE / MULTI / TEXT）
+│   └── ValidationMsg.java          # Bean Validation 錯誤訊息常數
+│
+├── controller/
+│   ├── QuizController.java         # 問卷與作答 REST 端點
+│   ├── FillinController.java       # 作答查詢 REST 端點
+│   └── UserController.java         # 使用者系統 REST 端點
+│
+├── service/
+│   ├── QuizService.java            # 問卷核心業務邏輯（含排程、事務管理）
+│   ├── FillinService.java          # 作答記錄儲存與查詢邏輯
+│   ├── UserService.java            # 使用者認證與資料更新邏輯
+│   └── QuestionService.java        # 問題服務（輔助）
+│
+├── dao/
+│   ├── QuizDao.java                # 問卷資料存取（Spring Data JPA）
+│   ├── QuestionDao.java            # 問題資料存取（含 JPQL 批次操作）
+│   ├── FillinDao.java              # 作答記錄存取
+│   └── UserDao.java                # 使用者資料存取
+│
+├── entity/
+│   ├── Quiz.java                   # 問卷實體（對應 quiz 資料表）
+│   ├── Question.java               # 問題實體（複合主鍵）
+│   ├── QuestionId.java             # Question 複合主鍵類別
+│   ├── Fillin.java                 # 作答記錄實體（複合主鍵）
+│   ├── FillinId.java               # Fillin 複合主鍵類別
+│   └── User.java                   # 使用者實體
+│
+├── req/
+│   ├── CreateReq.java              # 建立問卷請求體
+│   ├── UpdateReq.java              # 更新問卷請求體（繼承 CreateReq）
+│   ├── DeleteReq.java              # 批次刪除請求體
+│   ├── FillinReq.java              # 作答提交請求體
+│   ├── FeedbackReq.java            # 查詢作答請求體
+│   ├── LoginReq.java               # 登入請求體
+│   └── RegisterReq.java            # 註冊請求體
+│
+├── res/
+│   ├── BasicRes.java               # 基礎回應（code + message）
+│   ├── CreateRes.java              # 建立問卷回應
+│   ├── GetQuizRes.java             # 問卷列表回應
+│   ├── GetSingleQuizRes.java       # 單筆問卷回應
+│   ├── GetQuestionRes.java         # 題目列表回應
+│   ├── UpdateRes.java              # 更新問卷回應
+│   ├── LoginRes.java               # 登入回應（含使用者資料）
+│   ├── FeedbackRes.java            # 單人作答詳情回應
+│   ├── FeedbackUserVo.java         # 作答使用者 VO
+│   └── GetFeedbackUserRes.java     # 所有作答者回應
+│
+├── vo/
+│   └── AnswerVo.java               # 問題與答案組合的 Value Object
+│
+└── exception/
+    └── GlobalExceptionHandler.java # 全域例外處理（@RestControllerAdvice）
 ```
 
 ---
@@ -92,64 +136,159 @@ src/
 
 | 類別 | 技術 | 版本 |
 |------|------|------|
-| 前端框架 | Angular | 19.0 |
-| 程式語言 | TypeScript | 5.6 |
-| UI 元件庫 | Angular Material + CDK | 19.2 |
-| 圖表視覺化 | Chart.js | 4.5 |
-| 表單處理 | Angular Reactive Forms | 內建 |
-| 路由管理 | Angular Router + Route Guards | 內建 |
-| HTTP 通訊 | Angular HttpClient | 內建 |
-| 彈窗通知 | SweetAlert2 | 11.x |
-| 非同步處理 | RxJS | 7.8 |
-| 樣式預處理 | SCSS | - |
-| 部署工具 | gh-pages | 6.x |
+| 後端框架 | Spring Boot | 4.0.2 |
+| 程式語言 | Java | 17 |
+| ORM / 資料存取 | Spring Data JPA | 4.x |
+| 資料庫 | MySQL | 8.x |
+| 安全性 | Spring Security + BCrypt | 6.x |
+| 快取 | Caffeine Cache | 3.x |
+| API 文件 | Springdoc OpenAPI (Swagger UI) | 3.0.2 |
+| 參數驗證 | Spring Validation（Bean Validation） | 內建 |
+| 建置工具 | Gradle | 8.x |
+| 熱重載 | Spring DevTools | 內建 |
+| 日誌管理 | SLF4J + Logback | 內建 |
 
 ---
 
 ## 🚀 技術亮點
 
-### 1. 三層式路由架構（Route Strategy）
+### 1. 智慧差異更新問題列表（Diff Update Strategy）
 
-```typescript
-// app.routes.ts
+更新問卷時，**不直接刪除所有題目再重建**（避免 Fillin 作答記錄的外鍵關聯遺失），而是透過 Stream API 比對新舊題目 ID，精準執行「保留更新 / 新增 / 刪除」三種操作：
 
-// ── 第一層：公開路由（任何人皆可訪問）──
-{ path: 'list',            component: ListComponent },
-{ path: 'questionnaire/:id', component: QuestionnaireFillComponent },
-{ path: 'statistic/:id',   component: StatisticComponent },
+```java
+// QuizService.java — update()
+List<Integer> oldIds = oldQuestions.stream()
+    .map(Question::getQuestionId).toList();
 
-// ── 第二層：受保護路由（需通過 authGuard）──
-{
-  path: 'adminlist',
-  component: AdminlistComponent,
-  canActivate: [authGuard]   // ← Token 驗證守衛
-},
-{
-  path: 'member-profile',
-  component: MemberProfileComponent,
-  canActivate: [authGuard]
-},
+List<Integer> newIds = req.getQuestionList().stream()
+    .map(Question::getQuestionId)
+    .filter(id -> id > 0).toList();
 
-// ── 第三層：防呆重定向 ──
-{ path: '',    redirectTo: '/login', pathMatch: 'full' },
-{ path: '**',  redirectTo: '/list' }
+// 找出需要刪除的 ID (在舊的中，但不在新的中)
+List<Integer> idsToDelete = oldIds.stream()
+    .filter(id -> !newIds.contains(id)).toList();
+
+if (!idsToDelete.isEmpty()) {
+    questionDao.deleteByIds(req.getQuizId(), idsToDelete);
+}
 ```
 
-### 2. 動態問卷渲染（Data-Driven Rendering）
+### 2. 全域例外處理（@RestControllerAdvice）
 
-問卷填寫頁完全由後端 API 回傳的資料結構驅動，透過 `*ngFor` 迭代題目、`@switch` 判斷題型，**無需任何硬編碼**，新增題型只需擴展資料模型即可，高度符合 Open/Closed Principle。
+使用 `@RestControllerAdvice` 集中攔截全部例外，確保所有 API 回應格式統一，前端不會收到意外的 HTML 錯誤頁面：
 
-### 3. 服務層統一封裝（Service Abstraction）
+```java
+// GlobalExceptionHandler.java
+@ExceptionHandler({MethodArgumentNotValidException.class})
+public ResponseEntity<Map<String, Object>> paramExceptionHandler(MethodArgumentNotValidException e) {
+    // @Valid 驗證失敗 → 統一回傳 HTTP 400 + 第一個錯誤訊息
+    Map<String, Object> errorMap = new HashMap<>();
+    errorMap.put("code", HttpStatus.BAD_REQUEST.value());
+    errorMap.put("message", e.getAllErrors().get(0).getDefaultMessage());
+    return ResponseEntity.badRequest().body(errorMap);
+}
+```
 
-所有 API 呼叫集中在 `questionnaire.service.ts`，元件僅依賴 Service 方法，不直接操作 HttpClient，達到**關注點分離（Separation of Concerns）**，便於測試與維護。
+### 3. 訪客與會員共存的使用者系統
 
-### 4. Chart.js 統計視覺化
+作答時自動區分「訪客」與「已註冊會員」，透過密碼是否存在來判斷身份，且**不覆蓋已註冊會員的個人資料**：
 
-整合 Chart.js 將問卷回覆數據即時渲染為圓餅圖與長條圖，每次頁面進入時**自動銷毀舊 Chart 實例**（避免記憶體洩漏），確保圖表資料正確刷新。
+```java
+// FillinService.java — fillin()
+User currentUser = userDao.getByEmail(req.getEmail());
+boolean isRegisteredUser = StringUtils.hasText(currentUser.getPassword());
 
-### 5. SweetAlert2 使用者體驗優化
+// 只有訪客才允許更新資料，保護已註冊會員的帳號安全
+if (!isRegisteredUser) {
+    userDao.update(req.getName(), req.getPhone(), req.getAge(), req.getEmail());
+}
+```
 
-全站操作（送出、刪除、錯誤）統一使用 SweetAlert2 提供語意明確的互動反饋，取代原生 `alert()`，提升整體使用者體驗。
+### 4. 防重複提交保護
+
+作答前先確認是否已填寫過，防止 Primary Key 衝突造成 500 錯誤：
+
+```java
+// FillinService.java
+if (fillinDao.existsByQuizIdAndUserEmail(req.getQuizId(), req.getEmail())) {
+    return new BasicRes(400, "您已填寫過此問卷，請勿重複提交！");
+}
+```
+
+### 5. BCrypt 密碼加密
+
+所有密碼均透過 **BCrypt** 雜湊儲存，登入時使用 `matches()` 比對，原始密碼**永不存入資料庫**：
+
+```java
+// UserService.java
+userDao.insert(req.getEmail(), req.getName(),
+    encoder.encode(req.getPassword()), ...);  // 加密後儲存
+
+// 登入比對
+if (!encoder.matches(req.getPassword(), user.getPassword())) {
+    return new LoginRes(400, "密碼錯誤");
+}
+// 登入成功：清除密碼欄位再回傳，避免敏感資料外洩
+user.setPassword(null);
+```
+
+### 6. Caffeine 本地快取
+
+配置 Caffeine 快取管理器，對高頻查詢（如問題列表）提供記憶體快取，設定最大 500 筆、存取後 600 秒過期：
+
+```java
+// CaffeineCacheConfig.java
+cacheManager.setCaffeine(Caffeine.newBuilder()
+    .expireAfterAccess(600, TimeUnit.SECONDS)
+    .initialCapacity(100)
+    .maximumSize(500));
+```
+
+### 7. @Scheduled 排程任務
+
+示範 Spring 排程能力，支援 `fixedRate`、`fixedRateString`（讀取設定檔）與 Cron 表達式三種排程方式：
+
+```java
+// QuizService.java
+@Scheduled(fixedRateString = "${fixed.rate.ms}")   // 從 application.properties 讀取
+public void scheduleTest() { ... }
+
+@Scheduled(cron = "0 0 18 * * *")                 // 每天 18:00 提醒
+public void scheduleTest2() {
+    System.out.println("下班打卡提醒");
+}
+```
+
+---
+
+## 🗺️ 系統架構圖
+
+```mermaid
+graph TD
+    FE["Angular 19 Frontend\n(localhost:4200)"]
+    BE["Spring Boot 4 Backend\n(localhost:8080)"]
+    DB["MySQL 8\n(quiz_1141121)"]
+    CACHE["Caffeine Cache\nIn-Memory"]
+
+    FE -- "HTTP / CORS" --> BE
+    BE -- "Spring Data JPA" --> DB
+    BE -- "@Cacheable" --> CACHE
+    BE -- "@Scheduled" --> SCHEDULER["Background Scheduler"]
+```
+
+---
+
+## 🗄️ 資料庫設計
+
+系統包含以下 4 張核心資料表：
+
+| 資料表 | 說明 | 主鍵 |
+|--------|------|------|
+| `quiz` | 問卷主體（標題、描述、起訖日、發布狀態） | `id` (AI) |
+| `question` | 問題（題目、題型、選項、必填） | `(quiz_id, question_id)` 複合主鍵 |
+| `user` | 使用者（Email、姓名、加密密碼、手機、年齡） | `email` |
+| `fillin` | 作答記錄（問卷ID、題目ID、使用者Email、答案、時間） | `(quiz_id, question_id, user_email)` 複合主鍵 |
 
 ---
 
@@ -157,53 +296,59 @@ src/
 
 ### 環境需求
 
-- **Node.js** ≥ 18.x
-- **npm** ≥ 9.x
-- **Angular CLI** ≥ 19.x
+- **JDK** 17
+- **MySQL** 8.x
+- **Gradle** 8.x（或使用專案附帶的 `gradlew`）
 
 ### 安裝與啟動
 
 ```bash
 # 1. Clone 專案
-git clone https://github.com/BeeSuperman/dynamic-questionnaire-frontend.git
+git clone https://github.com/your-username/quiz-backend.git
+cd quiz-backend
 
-# 2. 進入專案目錄
-cd dynamic-questionnaire-frontend
+# 2. 建立 MySQL 資料庫
+# 在 MySQL 中執行：
+CREATE DATABASE quiz_1141121;
 
-# 3. 安裝相依套件
-npm install
+# 3. 修改資料庫連線設定
+# 編輯 src/main/resources/application.properties
+spring.datasource.url=jdbc:mysql://localhost:3306/quiz_1141121?serverTimezone=GMT%2B8
+spring.datasource.username=root
+spring.datasource.password=your_password
 
-# 4. 啟動本地開發伺服器
-npm start
+# 4. 啟動應用程式
+./gradlew bootRun
 ```
 
-開啟瀏覽器前往 `http://localhost:4200/` 即可看到應用程式。
+啟動後預設監聽 `http://localhost:8080`
+
+### 查看 API 文件（Swagger UI）
+
+```
+http://localhost:8080/swagger-ui/index.html
+```
 
 ---
 
-## 📦 建置與部署
-
-```bash
-# 建置生產版本（輸出至 dist/）
-npm run build
-
-# 一鍵部署至 GitHub Pages
-npm run deploy
-```
-
-> 部署腳本會自動執行 `ng build --base-href` 並透過 `gh-pages` 將 `dist/` 發布至 `gh-pages` 分支。
-
----
-
-## 📁 NPM 腳本說明
+## 📦 Gradle 任務說明
 
 | 指令 | 說明 |
 |------|------|
-| `npm start` | 啟動本地開發伺服器 (`localhost:4200`) |
-| `npm run build` | 建置生產版本至 `dist/` |
-| `npm run watch` | 開發模式，監聽檔案變更自動重建 |
-| `npm test` | 執行 Karma 單元測試 |
-| `npm run deploy` | 建置並自動部署至 GitHub Pages |
+| `./gradlew bootRun` | 啟動 Spring Boot 應用程式 |
+| `./gradlew build` | 建置專案（產生 JAR） |
+| `./gradlew test` | 執行 JUnit 單元測試 |
+| `./gradlew runPasswordGen` | 執行工具類別（密碼產生器） |
+
+---
+
+## 🔗 配套前端專案
+
+本後端 API 與以下 Angular 19 前端專案整合使用：
+
+**Frontend Repository：**[dynamic-questionnaire-frontend](https://github.com/BeeSuperman/dynamic-questionnaire-frontend)
+
+**Live Demo：**[https://BeeSuperman.github.io/dynamic-questionnaire-frontend](https://BeeSuperman.github.io/dynamic-questionnaire-frontend)
 
 ---
 
@@ -212,8 +357,8 @@ npm run deploy
 **BeeSuperman**
 
 - 🐙 GitHub：[@BeeSuperman](https://github.com/BeeSuperman)
-- 如果這個專案對你有幫助，歡迎給個 ⭐ Star 支持！
+- 本專案旨在展示企業級 Spring Boot 後端開發能力，歡迎給個 ⭐ Star 支持！
 
 ---
 
-<p align="center">Made with ❤️ using Angular 19 · TypeScript · Angular Material · Chart.js</p>
+<p align="center">Made with ☕ using Spring Boot 4 · Java 17 · Spring Data JPA · MySQL · Spring Security</p>
